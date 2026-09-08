@@ -11,7 +11,6 @@ import notificationRoutes from './src/routes/notifications.js';
 import clubRoutes from './src/routes/club.js';
 import publicRoutes from './src/routes/public.js';
 import userPortalRoutes from './src/routes/userPortal.js';
-import { bootstrapDatabase } from './src/config/db.js';
 
 const app = express();
 const port = Number(process.env.PORT || 5000);
@@ -62,5 +61,4 @@ app.use((err, _req, res, _next) => {
 
 app.listen(port, () => {
   console.log(`Pathfinder API running on http://localhost:${port}`);
-  bootstrapDatabase();
 });
