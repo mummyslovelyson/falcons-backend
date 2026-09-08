@@ -149,6 +149,20 @@ CREATE TABLE IF NOT EXISTS club_settings (
 );
 
 -- ==========================================================
+-- INDEXES FOR SCALE (2,000+ Users & Concurrency)
+-- ==========================================================
+CREATE INDEX IF NOT EXISTS idx_registrations_status ON registrations (status, submitted_at DESC);
+CREATE INDEX IF NOT EXISTS idx_church_members_church ON church_members (church_id, status);
+CREATE INDEX IF NOT EXISTS idx_church_members_phone ON church_members (phone);
+CREATE INDEX IF NOT EXISTS idx_church_members_email ON church_members (email);
+CREATE INDEX IF NOT EXISTS idx_attendance_meeting_date ON attendance (meeting_date);
+CREATE INDEX IF NOT EXISTS idx_attendance_member_id ON attendance (member_id);
+CREATE INDEX IF NOT EXISTS idx_uniform_requests_status ON uniform_requests (status, submitted_at DESC);
+CREATE INDEX IF NOT EXISTS idx_notifications_read ON notifications (is_read, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_club_events_date ON club_events (event_date DESC);
+CREATE INDEX IF NOT EXISTS idx_transactions_date ON transactions (txn_date DESC);
+
+-- ==========================================================
 -- SEED DATA (Runs safely with ON CONFLICT DO NOTHING)
 -- ==========================================================
 
