@@ -35,7 +35,12 @@ app.use(cookieParser());
 app.use(express.json({ limit: '15mb' }));
 
 app.get('/api/health', (_req, res) => {
-  res.json({ ok: true, service: 'pathfinder-backend' });
+  res.json({
+    ok: true,
+    service: 'pathfinder-backend',
+    database: process.env.DATABASE_URL ? 'configured' : 'missing',
+    version: '2.0-postgres',
+  });
 });
 
 app.use('/api/auth', authRoutes);
