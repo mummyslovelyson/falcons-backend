@@ -1,8 +1,29 @@
 # Hinterland Falcons Pathfinder API & Backend
 
-Express.js + MySQL backend service for the **Hinterland Falcons Pathfinder Club & Santasi AYM** portal.
+Node.js / Express.js + **PostgreSQL** (Neon) backend service for the **Hinterland Falcons Pathfinder Club & Santasi AYM** portal.
 
 Repository: [https://github.com/mummyslovelyson/falcons-backend](https://github.com/mummyslovelyson/falcons-backend)
+
+---
+
+## Database Architecture (PostgreSQL)
+
+This backend runs natively on **PostgreSQL** (specifically optimized for [Neon Serverless PostgreSQL](https://neon.tech)).
+
+### Quick Database Setup:
+1. Copy `.env.example` to `.env`:
+   ```bash
+   cp .env.example .env
+   ```
+2. Set your `DATABASE_URL` in `.env`:
+   ```env
+   DATABASE_URL=postgresql://user:password@host/neondb?sslmode=require
+   ```
+3. Initialize the database schema & initial seed data:
+   ```bash
+   npm run init-db
+   ```
+   *(This runs `sql/init-db.js`, which imports `sql/schema.sql` into your PostgreSQL database).*
 
 ---
 
@@ -25,34 +46,25 @@ Repository: [https://github.com/mummyslovelyson/falcons-backend](https://github.
   - Regulation uniform fabric orders and status processing.
 - **Administrative Suite (`/api/auth/admin`)**:
   - Secure JWT cookie sessions for district administrators.
-- **Automated Database Bootstrap**:
-  - Auto-creates all required tables and seeds default admins, churches, events, and honors on startup.
 
 ---
 
-## Local Setup
+## Local Development
 
-1. Ensure MySQL is running (e.g. via XAMPP, Docker, or native service).
-2. Copy `.env.example` to `.env`:
-   ```bash
-   cp .env.example .env
-   ```
-3. Configure your database credentials (`DB_HOST`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`).
-4. Install dependencies and start:
-   ```bash
-   npm install
-   npm run dev
-   ```
-   *The server runs on `http://localhost:5000/api`.*
+```bash
+npm install
+npm run dev
+```
+*The server runs on `http://localhost:5000/api`.*
 
 ---
 
-## Deployment (Render, Railway, VPS, Docker)
+## Production Deployment (Render, Railway, VPS, Docker)
 
 1. Set environment variables on your hosting provider:
    - `PORT`: (provided automatically or `5000`)
-   - `DATABASE_URL` or standard MySQL variables (`DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`)
-   - `CLIENT_ORIGIN`: Your deployed frontend URL (e.g. `https://hinterlandfalcons.org` or `http://localhost:8080`)
+   - `DATABASE_URL`: Your PostgreSQL connection string (from Neon or another PostgreSQL provider).
+   - `CLIENT_ORIGIN`: Your deployed frontend URL (e.g. `https://hinterlandfalcons.org`)
    - `JWT_SECRET`: A secure random secret string
    - `COOKIE_SECURE`: `true` (for HTTPS in production)
 2. Start command:
@@ -62,8 +74,13 @@ Repository: [https://github.com/mummyslovelyson/falcons-backend](https://github.
 
 ---
 
-## Default Credentials
+## Default Seed Credentials
 
-- **Admin Portal**: `admin@pathfinder.com` (or `admin@tnuc.gh`) / `pathfinder`
-- **Church Portal**: `santasi_clerk` / `Pathfinder@2026` (or any constituent church clerk username)
+After running `npm run init-db`:
 
+- **District Admin**:
+  - Email: `admin@pathfinder.com` or `admin@tnuc.gh`
+  - Password: `pathfinder`
+- **Church Portals (Santasi, Anyinam, Apire, Brofoyedru, Fankyenebra, Twedie)**:
+  - Usernames: `santasi_clerk`, `anyinam_clerk`, `apire_clerk`, etc.
+  - Initial Password: `Pathfinder@2026`
