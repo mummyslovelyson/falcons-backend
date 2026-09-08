@@ -25,8 +25,8 @@ router.post('/admin/login', asyncHandler(async (req, res) => {
   if (!admin || !(await bcrypt.compare(password, admin.password_hash))) {
     return res.status(401).json({ message: 'Invalid administrator credentials' });
   }
-  setAdminCookie(res, { id: admin.id, email: admin.email, name: admin.name });
-  res.json({ id: admin.id, email: admin.email, name: admin.name });
+  const token = setAdminCookie(res, { id: admin.id, email: admin.email, name: admin.name });
+  res.json({ id: admin.id, email: admin.email, name: admin.name, token });
 }));
 
 router.post('/admin/logout', (req, res) => {
@@ -69,8 +69,8 @@ router.post('/church/login', asyncHandler(async (req, res) => {
   if (!church || !(await bcrypt.compare(password, church.password_hash))) {
     return res.status(401).json({ message: 'Invalid church credentials' });
   }
-  setChurchCookie(res, { id: church.id, username: church.username, name: church.name });
-  res.json(mapChurch(church));
+  const token = setChurchCookie(res, { id: church.id, username: church.username, name: church.name });
+  res.json({ ...mapChurch(church), token });
 }));
 
 router.post('/church/logout', (req, res) => {

@@ -5,10 +5,11 @@ export const CHURCH_COOKIE = 'pf_church';
 export const USER_COOKIE = 'pf_user';
 
 function cookieOptions() {
+  const isCrossSite = process.env.NODE_ENV === 'production' || process.env.COOKIE_SECURE === 'true';
   return {
     httpOnly: true,
-    sameSite: 'lax',
-    secure: process.env.COOKIE_SECURE === 'true',
+    sameSite: isCrossSite ? 'none' : 'lax',
+    secure: isCrossSite,
     path: '/',
     maxAge: 7 * 24 * 60 * 60 * 1000,
   };
@@ -19,24 +20,39 @@ export function signToken(payload) {
 }
 
 export function setAdminCookie(res, payload) {
-  res.cookie(ADMIN_COOKIE, signToken({ ...payload, role: 'admin' }), cookieOptions());
+  const token = signToken({ ...payload, role: 'admin' });
+  res.cookie(ADMIN_COOKIE, token, cookieOptions());
+  return token;
 }
 
 export function setChurchCookie(res, payload) {
-  res.cookie(CHURCH_COOKIE, signToken({ ...payload, role: 'church' }), cookieOptions());
+  const token = signToken({ ...payload, role: 'church' });
+  res.cookie(CHURCH_COOKIE, token, cookieOptions());
+  return token;
 }
 
 export function setUserCookie(res, payload) {
-  res.cookie(USER_COOKIE, signToken({ ...payload, role: 'user' }), cookieOptions());
+  const token = signToken({ ...payload, role: 'user' });
+  res.cookie(USER_COOKIE, token, cookieOptions());
+  return token;
 }
 
 export function clearAuthCookies(res) {
-  res.clearCookie(ADMIN_COOKIE, { path: '/' });
-  res.clearCookie(CHURCH_COOKIE, { path: '/' });
-  res.clearCookie(USER_COOKIE, { path: '/' });
+  const opts = cookieOptions();
+  res.clearCookie(ADMIN_COOKIE, opts);
+  res.clearCookie(CHURCH_COOKIE, opts);
+  res.clearCookie(USER_COOKIE, opts);
 }
 
 export function readToken(req, name) {
+  const authHeader = req.headers.authorization;
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    const bearerToken = authHeader.slice(7).trim();
+    try {
+      return jwt.verify(bearerToken, process.env.JWT_SECRET || 'dev-secret');
+    } catch {}
+  }
+
   const token = req.cookies?.[name];
   if (!token) return null;
   try {

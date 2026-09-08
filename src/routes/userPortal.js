@@ -39,7 +39,7 @@ router.post('/login', asyncHandler(async (req, res) => {
     if ((cleanRef && cleanContact && (idMatch || phoneMatch)) ||
         (cleanRef && !cleanContact && idMatch) ||
         (!cleanRef && cleanContact && phoneMatch)) {
-      setUserCookie(res, {
+      const token = setUserCookie(res, {
         id: reg.id,
         name: reg.applicant?.fullName || 'Member',
         type: 'registration',
@@ -47,6 +47,7 @@ router.post('/login', asyncHandler(async (req, res) => {
       return res.json({
         type: 'registration',
         record: reg,
+        token,
       });
     }
   }
@@ -66,7 +67,7 @@ router.post('/login', asyncHandler(async (req, res) => {
     if ((cleanRef && cleanContact && (idMatch || phoneMatch)) ||
         (cleanRef && !cleanContact && idMatch) ||
         (!cleanRef && cleanContact && phoneMatch)) {
-      setUserCookie(res, {
+      const token = setUserCookie(res, {
         id: mem.id,
         name: fullName,
         type: 'church_member',
@@ -74,6 +75,7 @@ router.post('/login', asyncHandler(async (req, res) => {
       return res.json({
         type: 'church_member',
         record: mem,
+        token,
       });
     }
   }
